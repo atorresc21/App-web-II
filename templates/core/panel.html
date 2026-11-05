@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Panel{% endblock %}
+{% block contenido %}
+<h1>Mi panel</h1>
+<p>Así se ve tu ingreso más reciente repartido entre gastos, ahorro y dinero disponible.</p>
+
+<section class="rejilla">
+    <article class="tarjeta resumen">
+        <h2>Para tus gastos</h2>
+        <p class="cifra">{{ para_gastos }}</p>
+    </article>
+    <article class="tarjeta resumen">
+        <h2>Ahorro sugerido</h2>
+        <p class="cifra">{{ ahorro }}</p>
+    </article>
+    <article class="tarjeta resumen resaltada">
+        <h2>Dinero disponible</h2>
+        <p class="cifra">{{ disponible }}</p>
+    </article>
+</section>
+
+<section class="rejilla dos">
+    <article class="tarjeta">
+        <h2>Meta principal</h2>
+        <p><strong>{{ meta_principal.nombre }}</strong></p>
+        <div class="barra-progreso" role="progressbar" aria-valuenow="{{ meta_principal.avance }}" aria-valuemin="0" aria-valuemax="100">
+            <span style="width: {{ meta_principal.avance }}%"></span>
+        </div>
+        <p>{{ meta_principal.ahorrado }} de {{ meta_principal.objetivo }} ({{ meta_principal.avance }} %)</p>
+        <a href="{% url 'metas' %}">Ver todas las metas</a>
+    </article>
+    <article class="tarjeta">
+        <h2>Próximos pagos</h2>
+        <ul class="lista">
+            {% for pago in pagos %}
+            <li><span>{{ pago.nombre }} · {{ pago.fecha }}</span> <strong>{{ pago.monto }}</strong></li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'recordatorios' %}">Ver recordatorios</a>
+    </article>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<section class="portada">
+    <h1>Organiza tu dinero sin complicarte</h1>
+    <p class="destacado">Registra lo que ganas y lo que gastas, y Axon Budget te dice cuánto separar para tus gastos, cuánto ahorrar y cuánto te queda disponible.</p>
+    <div class="acciones">
+        <a class="boton" href="{% url 'registro' %}">Crear cuenta</a>
+        <a class="boton boton-claro" href="{% url 'panel' %}">Ver el panel de ejemplo</a>
+    </div>
+</section>
+
+<section>
+    <h2>¿Qué puedes hacer?</h2>
+    <div class="rejilla">
+        <article class="tarjeta">
+            <h3>Registrar ingresos y gastos</h3>
+            <p>Anota lo que recibes a diario, cada semana, cada quincena o cada mes, y tus gastos fijos y variables.</p>
+            <a href="{% url 'ingresos' %}">Ir a ingresos</a>
+        </article>
+        <article class="tarjeta">
+            <h3>Saber cuánto te queda</h3>
+            <p>Mira en una sola pantalla tu dinero disponible, tu meta principal y tus próximos pagos.</p>
+            <a href="{% url 'panel' %}">Ir al panel</a>
+        </article>
+        <article class="tarjeta">
+            <h3>Cumplir tus metas</h3>
+            <p>Crea varias metas de ahorro, elige una como principal y mira cuánto llevas.</p>
+            <a href="{% url 'metas' %}">Ir a metas</a>
+        </article>
+        <article class="tarjeta">
+            <h3>No olvidar tus pagos</h3>
+            <p>Guarda las fechas de pago y recibe un aviso antes de que lleguen.</p>
+            <a href="{% url 'recordatorios' %}">Ir a recordatorios</a>
+        </article>
+        <article class="tarjeta">
+            <h3>Entender tus finanzas</h3>
+            <p>Consulta reportes por mes para ver cómo se mueve tu dinero.</p>
+            <a href="{% url 'reportes' %}">Ir a reportes</a>
+        </article>
+    </div>
+</section>
+{% endblock %}

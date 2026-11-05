@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta{% endblock %}
+{% block contenido %}
+<section class="formulario-centrado">
+    <h1>Crear cuenta</h1>
+    <p>Solo necesitas unos datos para empezar.</p>
+    <form class="formulario" action="{% url 'panel' %}" method="get">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" name="nombre" required>
+
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" type="email" name="correo" placeholder="nombre@correo.com" required>
+
+        <label for="clave">Contraseña</label>
+        <input id="clave" type="password" name="clave" minlength="8" required>
+
+        <label class="casilla">
+            <input type="checkbox" name="privacidad" required>
+            Acepto el aviso de privacidad y el tratamiento de mis datos personales.
+        </label>
+
+        <button class="boton" type="submit">Crear cuenta</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a>.</p>
+</section>
+{% endblock %}

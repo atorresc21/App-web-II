@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Metas{% endblock %}
+{% block contenido %}
+<h1>Metas de ahorro</h1>
+<p>Puedes tener varias metas y elegir una como principal.</p>
+
+<section class="rejilla">
+    {% for meta in metas %}
+    <article class="tarjeta {% if meta.principal %}resaltada{% endif %}">
+        <h2>{{ meta.nombre }}</h2>
+        {% if meta.principal %}<p class="etiqueta">Meta principal</p>{% endif %}
+        <div class="barra-progreso" role="progressbar" aria-valuenow="{{ meta.avance }}" aria-valuemin="0" aria-valuemax="100">
+            <span style="width: {{ meta.avance }}%"></span>
+        </div>
+        <p>{{ meta.ahorrado }} de {{ meta.objetivo }} ({{ meta.avance }} %)</p>
+    </article>
+    {% endfor %}
+</section>
+
+<h2>Nueva meta</h2>
+<form class="formulario ancho" action="{% url 'metas' %}" method="get">
+    <div class="fila">
+        <div>
+            <label for="nombre">Nombre de la meta</label>
+            <input id="nombre" type="text" name="nombre" required>
+        </div>
+        <div>
+            <label for="objetivo">Monto que quieres lograr</label>
+            <input id="objetivo" type="number" name="objetivo" min="0" step="1000" required>
+        </div>
+    </div>
+    <label class="casilla">
+        <input type="checkbox" name="principal">
+        Marcar como meta principal
+    </label>
+    <button class="boton" type="submit">Guardar meta</button>
+</form>
+{% endblock %}

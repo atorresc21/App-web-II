@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Recordatorios{% endblock %}
+{% block contenido %}
+<h1>Recordatorios de pago</h1>
+<p>Te avisamos 3 días antes y el mismo día del pago.</p>
+
+<section class="rejilla">
+    {% for pago in pagos %}
+    <article class="tarjeta">
+        <h2>{{ pago.nombre }}</h2>
+        <p class="cifra">{{ pago.monto }}</p>
+        <p>Vence el {{ pago.fecha }} (faltan {{ pago.faltan }})</p>
+    </article>
+    {% endfor %}
+</section>
+
+<h2>Nuevo recordatorio</h2>
+<form class="formulario ancho" action="{% url 'recordatorios' %}" method="get">
+    <div class="fila">
+        <div>
+            <label for="nombre">¿Qué vas a pagar?</label>
+            <input id="nombre" type="text" name="nombre" placeholder="Arriendo" required>
+        </div>
+        <div>
+            <label for="monto">Monto</label>
+            <input id="monto" type="number" name="monto" min="0" step="1000" required>
+        </div>
+        <div>
+            <label for="fecha">Fecha de pago</label>
+            <input id="fecha" type="date" name="fecha" required>
+        </div>
+    </div>
+    <button class="boton" type="submit">Guardar recordatorio</button>
+</form>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Ingresos{% endblock %}
+{% block contenido %}
+<h1>Ingresos</h1>
+<p>Anota el dinero que recibes y cada cuánto te llega.</p>
+
+<form class="formulario ancho" action="{% url 'ingresos' %}" method="get">
+    <div class="fila">
+        <div>
+            <label for="descripcion">Descripción</label>
+            <input id="descripcion" type="text" name="descripcion" placeholder="Pago quincenal" required>
+        </div>
+        <div>
+            <label for="monto">Monto</label>
+            <input id="monto" type="number" name="monto" min="0" step="1000" required>
+        </div>
+        <div>
+            <label for="fecha">Fecha</label>
+            <input id="fecha" type="date" name="fecha" required>
+        </div>
+        <div>
+            <label for="periodicidad">Periodicidad</label>
+            <select id="periodicidad" name="periodicidad">
+                <option>Diaria</option>
+                <option>Semanal</option>
+                <option selected>Quincenal</option>
+                <option>Mensual</option>
+                <option>Variable</option>
+            </select>
+        </div>
+    </div>
+    <button class="boton" type="submit">Guardar ingreso</button>
+</form>
+
+<h2>Ingresos registrados</h2>
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr><th>Fecha</th><th>Descripción</th><th>Periodicidad</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            {% for i in ingresos %}
+            <tr><td>{{ i.fecha }}</td><td>{{ i.descripcion }}</td><td>{{ i.periodicidad }}</td><td>{{ i.monto }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

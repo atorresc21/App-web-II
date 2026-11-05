@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Reportes{% endblock %}
+{% block contenido %}
+<h1>Reportes</h1>
+<p>Compara lo que ganaste con lo que gastaste en cada mes.</p>
+
+<section class="tarjeta">
+    <h2>Ingresos y gastos por mes</h2>
+    {% for f in filas %}
+    <div class="grupo-barras">
+        <p><strong>{{ f.mes }}</strong></p>
+        <div class="linea-barra">
+            <span class="etiqueta-barra">Ingresos</span>
+            <div class="barra-fondo"><span class="barra-ingreso" style="width: {{ f.ancho_ingresos }}%"></span></div>
+            <span class="valor-barra">{{ f.ingresos }}</span>
+        </div>
+        <div class="linea-barra">
+            <span class="etiqueta-barra">Gastos</span>
+            <div class="barra-fondo"><span class="barra-gasto" style="width: {{ f.ancho_gastos }}%"></span></div>
+            <span class="valor-barra">{{ f.gastos }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+<h2>Detalle</h2>
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr><th>Mes</th><th>Ingresos</th><th>Gastos</th></tr>
+        </thead>
+        <tbody>
+            {% for f in filas %}
+            <tr><td>{{ f.mes }}</td><td>{{ f.ingresos }}</td><td>{{ f.gastos }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

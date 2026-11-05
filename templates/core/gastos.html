@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block titulo %}Gastos{% endblock %}
+{% block contenido %}
+<h1>Gastos</h1>
+<p>Anota en qué se va tu dinero, ya sean gastos fijos o variables.</p>
+
+<form class="formulario ancho" action="{% url 'gastos' %}" method="get">
+    <div class="fila">
+        <div>
+            <label for="descripcion">Descripción</label>
+            <input id="descripcion" type="text" name="descripcion" placeholder="Arriendo" required>
+        </div>
+        <div>
+            <label for="monto">Monto</label>
+            <input id="monto" type="number" name="monto" min="0" step="1000" required>
+        </div>
+        <div>
+            <label for="categoria">Categoría</label>
+            <select id="categoria" name="categoria">
+                <option>Vivienda</option>
+                <option>Alimentación</option>
+                <option>Transporte</option>
+                <option>Servicios</option>
+                <option>Salud</option>
+                <option>Educación</option>
+                <option>Ocio</option>
+                <option>Otros</option>
+            </select>
+        </div>
+        <div>
+            <label for="tipo">Tipo</label>
+            <select id="tipo" name="tipo">
+                <option>Fijo</option>
+                <option>Variable</option>
+            </select>
+        </div>
+    </div>
+    <button class="boton" type="submit">Guardar gasto</button>
+</form>
+
+<h2>Gastos registrados</h2>
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Tipo</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            {% for g in gastos %}
+            <tr><td>{{ g.fecha }}</td><td>{{ g.descripcion }}</td><td>{{ g.categoria }}</td><td>{{ g.tipo }}</td><td>{{ g.monto }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

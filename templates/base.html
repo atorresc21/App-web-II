@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}Axon Budget{% endblock %} | Axon Budget</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <header class="encabezado">
+        <div class="contenedor barra">
+            <a class="marca" href="{% url 'inicio' %}">Axon Budget</a>
+            <nav class="menu" aria-label="Menú principal">
+                <a href="{% url 'inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}class="activo"{% endif %}>Inicio</a>
+                <a href="{% url 'panel' %}" {% if request.resolver_match.url_name == 'panel' %}class="activo"{% endif %}>Panel</a>
+                <a href="{% url 'ingresos' %}" {% if request.resolver_match.url_name == 'ingresos' %}class="activo"{% endif %}>Ingresos</a>
+                <a href="{% url 'gastos' %}" {% if request.resolver_match.url_name == 'gastos' %}class="activo"{% endif %}>Gastos</a>
+                <a href="{% url 'metas' %}" {% if request.resolver_match.url_name == 'metas' %}class="activo"{% endif %}>Metas</a>
+                <a href="{% url 'recordatorios' %}" {% if request.resolver_match.url_name == 'recordatorios' %}class="activo"{% endif %}>Recordatorios</a>
+                <a href="{% url 'reportes' %}" {% if request.resolver_match.url_name == 'reportes' %}class="activo"{% endif %}>Reportes</a>
+            </nav>
+            <a class="boton boton-claro" href="{% url 'login' %}">Iniciar sesión</a>
+        </div>
+    </header>
+
+    <main class="contenedor principal">
+        {% block contenido %}{% endblock %}
+    </main>
+
+    <footer class="pie">
+        <div class="contenedor">
+            <p>Axon Budget · Axon Hub · Corporación Universitaria Rafael Núñez · Cartagena de Indias</p>
+            <p>Proyecto integrador de Aplicaciones Web II. Los datos que se ven son de ejemplo.</p>
+        </div>
+    </footer>
+</body>
+</html>
