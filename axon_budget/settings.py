@@ -2,14 +2,32 @@
 Configuración de Django para el proyecto Axon Budget.
 """
 
+
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Solo para desarrollo. No subas esta clave a un servidor real.
-SECRET_KEY = 'django-insecure-i7$=q!^g^tbbus#peiv*p_bj-5)3srw=00%d@6gd^(!&-39^2_'
 
+# Cargar variables privadas desde .env
+load_dotenv(BASE_DIR / ".env")
+
+
+# Clave secreta protegida
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+
+
+if not SECRET_KEY:
+    raise ValueError(
+        "No se encontró DJANGO_SECRET_KEY en el archivo .env"
+    )
+
+
+# Configuración de desarrollo
 DEBUG = True
+
 
 ALLOWED_HOSTS = []
 
@@ -24,6 +42,7 @@ INSTALLED_APPS = [
     'core',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -34,7 +53,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'axon_budget.urls'
+
 
 TEMPLATES = [
     {
@@ -52,27 +73,22 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'axon_budget.wsgi.application'
 
 
-import os
-from dotenv import load_dotenv
-
-load_dotenv(BASE_DIR / ".env")
-
+# Conexión con MySQL
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("DB_NAME", "axon_budget"),
+        "USER": os.getenv("DB_USER", "root"),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "3306"),
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -93,15 +109,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # Idioma y hora
 LANGUAGE_CODE = 'es-co'
 
+
 TIME_ZONE = 'America/Bogota'
 
+
 USE_I18N = True
+
 
 USE_TZ = True
 
 
-# Archivos estáticos (CSS, JavaScript, imágenes)
+# Archivos estáticos
 STATIC_URL = 'static/'
+
+
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

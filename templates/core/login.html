@@ -1,18 +1,33 @@
-{% extends "base.html" %}
-{% block titulo %}Iniciar sesión{% endblock %}
-{% block contenido %}
-<section class="formulario-centrado">
-    <h1>Iniciar sesión</h1>
-    <p>Entra con tu correo y tu contraseña.</p>
-    <form class="formulario" action="{% url 'panel' %}" method="get">
-        <label for="correo">Correo electrónico</label>
-        <input id="correo" type="email" name="correo" placeholder="nombre@correo.com" required>
+def login(request):
+    if request.method == "POST":
+        correo = request.POST.get("correo", "").strip()
+        clave = request.POST.get("clave", "")
 
-        <label for="clave">Contraseña</label>
-        <input id="clave" type="password" name="clave" required>
 
-        <button class="boton" type="submit">Entrar</button>
-    </form>
-    <p>¿No tienes cuenta? <a href="{% url 'registro' %}">Crea una aquí</a>.</p>
-</section>
-{% endblock %}
+        Usuario = get_user_model()
+
+
+        usuario = Usuario.objects.filter(
+            email__iexact=correo
+        ).first()
+
+
+        if usuario:
+            usuario_autenticado = authenticate(
+                request,
+                username=usuario.get_username(),
+                password=clave
+            )
+
+
+            if usuario_autenticado is not None:
+                auth_login(request, usuario_autenticado)
+                return redirect("panel")
+
+
+        return render(request, "core/login.html", {
+            "error": "Correo electrónico o contraseña incorrectos."
+        })
+
+
+    return render(request, "core/login.html")
