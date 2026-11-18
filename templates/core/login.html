@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block titulo %}Iniciar sesión{% endblock %}
 {% block contenido %}
-<section class="formulario-centrado">
+<section class="acceso">
+    <p class="sobretitulo">Bienvenido de nuevo</p>
     <h1>Iniciar sesión</h1>
-    <p>Entra con tu correo y tu contraseña.</p>
-    <form class="formulario" action="{% url 'panel' %}" method="get">
-        <label for="correo">Correo electrónico</label>
-        <input id="correo" type="email" name="correo" placeholder="nombre@correo.com" required>
-
-        <label for="clave">Contraseña</label>
-        <input id="clave" type="password" name="clave" required>
-
-        <button class="boton" type="submit">Entrar</button>
+    <p>Entra para ver cómo va tu dinero.</p>
+    <form class="formulario tarjeta dorada" method="post" novalidate>
+        {% csrf_token %}
+        {% include "core/_campos.html" %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <div class="acciones">
+            <button class="boton" type="submit">Entrar</button>
+        </div>
     </form>
-    <p>¿No tienes cuenta? <a href="{% url 'registro' %}">Crea una aquí</a>.</p>
+    <p>¿Aún no tienes cuenta? <a href="{% url 'registro' %}">Crea una aquí</a>.</p>
 </section>
 {% endblock %}

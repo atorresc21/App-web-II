@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Administración{% endblock %}
+{% block contenido %}
+<p class="sobretitulo">Rol Administrador</p>
+<h1>Administración de usuarios</h1>
+<p>Consulta cuántas personas usan Axon Budget y activa o desactiva cuentas.</p>
+
+<section class="rejilla dos">
+    <article class="tarjeta">
+        <h2>Usuarios registrados</h2>
+        <p class="cifra">{{ total }}</p>
+    </article>
+    <article class="tarjeta resaltada">
+        <h2>Cuentas activas</h2>
+        <p class="cifra">{{ activos }}</p>
+    </article>
+</section>
+
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr><th>Nombre</th><th>Correo o usuario</th><th>Rol</th><th>Estado</th><th>Se unió</th><th>Acción</th></tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td>{{ u.first_name|default:"—" }}</td>
+                <td>{{ u.email|default:u.username }}</td>
+                <td>{% if u.is_staff %}Administrador{% else %}Usuario{% endif %}</td>
+                <td>{% if u.is_active %}Activa{% else %}Desactivada{% endif %}</td>
+                <td>{{ u.date_joined|date:"d/m/Y" }}</td>
+                <td>
+                    {% if u.is_superuser or u == user %}
+                        —
+                    {% else %}
+                        <form action="{% url 'usuario_estado' u.pk %}" method="post" class="form-tabla">
+                            {% csrf_token %}
+                            <button class="boton boton-claro" type="submit">{% if u.is_active %}Desactivar{% else %}Activar{% endif %}</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Eliminar{% endblock %}
+{% block contenido %}
+<section class="acceso">
+    <p class="sobretitulo">Confirmar</p>
+    <h1>¿Eliminar este registro?</h1>
+    <div class="tarjeta dorada">
+        <p>Vas a eliminar: <strong>{{ object }}</strong></p>
+        <p>Esta acción no se puede deshacer.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="acciones">
+                <button class="boton" type="submit">Sí, eliminar</button>
+                <a class="boton boton-claro" href="{{ cancelar }}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

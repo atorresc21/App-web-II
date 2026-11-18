@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<section class="acceso">
+    <p class="sobretitulo">Axon Budget</p>
+    <h1>{{ titulo }}</h1>
+    <form class="formulario tarjeta dorada" method="post" novalidate>
+        {% csrf_token %}
+        {% include "core/_campos.html" %}
+        <div class="acciones">
+            <button class="boton" type="submit">{{ boton }}</button>
+            <a class="boton boton-claro" href="{{ cancelar }}">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
