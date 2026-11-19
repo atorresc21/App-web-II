@@ -10,28 +10,60 @@
 <body>
     <header class="encabezado">
         <div class="contenedor barra">
-            <a class="marca" href="{% url 'inicio' %}">Axon Budget</a>
+            <a class="marca" href="{% url 'inicio' %}"><span class="marca-simbolo" aria-hidden="true">◆</span> Axon Budget</a>
+
+            {% with actual=request.resolver_match.url_name|default:"" %}
             <nav class="menu" aria-label="Menú principal">
-                <a href="{% url 'inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}class="activo"{% endif %}>Inicio</a>
-                <a href="{% url 'panel' %}" {% if request.resolver_match.url_name == 'panel' %}class="activo"{% endif %}>Panel</a>
-                <a href="{% url 'ingresos' %}" {% if request.resolver_match.url_name == 'ingresos' %}class="activo"{% endif %}>Ingresos</a>
-                <a href="{% url 'gastos' %}" {% if request.resolver_match.url_name == 'gastos' %}class="activo"{% endif %}>Gastos</a>
-                <a href="{% url 'metas' %}" {% if request.resolver_match.url_name == 'metas' %}class="activo"{% endif %}>Metas</a>
-                <a href="{% url 'recordatorios' %}" {% if request.resolver_match.url_name == 'recordatorios' %}class="activo"{% endif %}>Recordatorios</a>
-                <a href="{% url 'reportes' %}" {% if request.resolver_match.url_name == 'reportes' %}class="activo"{% endif %}>Reportes</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'panel' %}" {% if actual == 'panel' %}class="activo"{% endif %}>Panel</a>
+                    <a href="{% url 'ingresos' %}" {% if 'ingreso' in actual %}class="activo"{% endif %}>Ingresos</a>
+                    <a href="{% url 'gastos' %}" {% if 'gasto' in actual %}class="activo"{% endif %}>Gastos</a>
+                    <a href="{% url 'metas' %}" {% if 'meta' in actual %}class="activo"{% endif %}>Metas</a>
+                    <a href="{% url 'recordatorios' %}" {% if 'recordatorio' in actual %}class="activo"{% endif %}>Recordatorios</a>
+                    <a href="{% url 'reportes' %}" {% if actual == 'reportes' %}class="activo"{% endif %}>Reportes</a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'usuarios_admin' %}" {% if 'usuario' in actual %}class="activo"{% endif %}>Administración</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'inicio' %}" {% if actual == 'inicio' %}class="activo"{% endif %}>Inicio</a>
+                {% endif %}
             </nav>
-            <a class="boton boton-claro" href="{% url 'login' %}">Iniciar sesión</a>
+            {% endwith %}
+
+            <div class="cuenta">
+                {% if user.is_authenticated %}
+                    <span class="usuario">{{ user.first_name|default:user.username }}{% if user.is_staff %} · Administrador{% endif %}</span>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="boton boton-claro" type="submit">Salir</button>
+                    </form>
+                {% else %}
+                    <a class="boton boton-claro" href="{% url 'login' %}">Iniciar sesión</a>
+                    <a class="boton" href="{% url 'registro' %}">Crear cuenta</a>
+                {% endif %}
+            </div>
         </div>
     </header>
 
     <main class="contenedor principal">
+        {% if messages %}
+        <div class="mensajes" role="status">
+            {% for mensaje in messages %}
+            <div class="mensaje mensaje-{{ mensaje.tags }}">
+                <span class="mensaje-icono" aria-hidden="true">{% if mensaje.tags == 'error' %}!{% else %}✓{% endif %}</span>
+                <p>{{ mensaje }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% block contenido %}{% endblock %}
     </main>
 
     <footer class="pie">
         <div class="contenedor">
+            <p class="pie-lema"><span aria-hidden="true">◆</span> Manejar bien tu dinero es el verdadero lujo.</p>
             <p>Axon Budget · Axon Hub · Corporación Universitaria Rafael Núñez · Cartagena de Indias</p>
-            <p>Proyecto integrador de Aplicaciones Web II. Los datos que se ven son de ejemplo.</p>
         </div>
     </footer>
 </body>

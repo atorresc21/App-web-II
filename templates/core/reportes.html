@@ -1,39 +1,84 @@
 {% extends "base.html" %}
+{% load formato %}
 {% block titulo %}Reportes{% endblock %}
 {% block contenido %}
+<p class="sobretitulo">Entender para decidir</p>
 <h1>Reportes</h1>
-<p>Compara lo que ganaste con lo que gastaste en cada mes.</p>
+<p>Mira cómo se mueve tu dinero por semana, quincena o mes.</p>
 
+<nav class="filtros" aria-label="Periodo del historial">
+    <a href="?periodo=semana" {% if periodo == 'semana' %}class="activo"{% endif %}>Esta semana</a>
+    <a href="?periodo=quincena" {% if periodo == 'quincena' %}class="activo"{% endif %}>Esta quincena</a>
+    <a href="?periodo=mes" {% if periodo == 'mes' %}class="activo"{% endif %}>Este mes</a>
+    <a href="?periodo=todo" {% if periodo == 'todo' %}class="activo"{% endif %}>Todo</a>
+</nav>
+
+<section class="rejilla tres">
+    <article class="tarjeta">
+        <h2>Ingresos</h2>
+        <p class="cifra">{{ total_ingresos|cop }}</p>
+    </article>
+    <article class="tarjeta">
+        <h2>Gastos</h2>
+        <p class="cifra">{{ total_gastos|cop }}</p>
+    </article>
+    <article class="tarjeta resaltada">
+        <h2>Balance</h2>
+        <p class="cifra">{{ balance|cop }}</p>
+    </article>
+</section>
+
+<h2>Historial</h2>
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Detalle</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            {% for m in movimientos %}
+            <tr>
+                <td>{{ m.fecha|date:"d/m/Y" }}</td>
+                <td>{{ m.tipo }}</td>
+                <td>{{ m.descripcion }}</td>
+                <td>{{ m.detalle }}</td>
+                <td class="monto">{% if m.tipo == "Gasto" %}-{% else %}+{% endif %}{{ m.monto|cop }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No hay movimientos en este periodo.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2>Ingresos y gastos por mes</h2>
 <section class="tarjeta">
-    <h2>Ingresos y gastos por mes</h2>
     {% for f in filas %}
     <div class="grupo-barras">
         <p><strong>{{ f.mes }}</strong></p>
         <div class="linea-barra">
             <span class="etiqueta-barra">Ingresos</span>
             <div class="barra-fondo"><span class="barra-ingreso" style="width: {{ f.ancho_ingresos }}%"></span></div>
-            <span class="valor-barra">{{ f.ingresos }}</span>
+            <span class="valor-barra">{{ f.ingresos|cop }}</span>
         </div>
         <div class="linea-barra">
             <span class="etiqueta-barra">Gastos</span>
             <div class="barra-fondo"><span class="barra-gasto" style="width: {{ f.ancho_gastos }}%"></span></div>
-            <span class="valor-barra">{{ f.gastos }}</span>
+            <span class="valor-barra">{{ f.gastos|cop }}</span>
         </div>
     </div>
     {% endfor %}
 </section>
 
-<h2>Detalle</h2>
-<div class="tabla-contenedor">
-    <table>
-        <thead>
-            <tr><th>Mes</th><th>Ingresos</th><th>Gastos</th></tr>
-        </thead>
-        <tbody>
-            {% for f in filas %}
-            <tr><td>{{ f.mes }}</td><td>{{ f.ingresos }}</td><td>{{ f.gastos }}</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<h2>Tus gastos de {{ mes_actual }} por categoría</h2>
+<section class="tarjeta">
+    {% for c in categorias %}
+    <div class="linea-barra">
+        <span class="etiqueta-barra">{{ c.nombre }}</span>
+        <div class="barra-fondo"><span class="barra-ingreso" style="width: {{ c.ancho }}%"></span></div>
+        <span class="valor-barra">{{ c.monto|cop }}</span>
+    </div>
+    {% empty %}
+    <p>Aún no hay gastos registrados este mes.</p>
+    {% endfor %}
+</section>
 {% endblock %}

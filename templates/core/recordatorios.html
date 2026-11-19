@@ -1,35 +1,34 @@
 {% extends "base.html" %}
+{% load formato %}
 {% block titulo %}Recordatorios{% endblock %}
 {% block contenido %}
-<h1>Recordatorios de pago</h1>
-<p>Te avisamos 3 días antes y el mismo día del pago.</p>
+<div class="encabezado-pagina">
+    <div>
+        <p class="sobretitulo">Cada pago a tiempo</p>
+        <h1>Recordatorios de pago</h1>
+        <p>Te avisamos en tu panel 3 días antes y el mismo día del pago.</p>
+    </div>
+    <a class="boton" href="{% url 'recordatorio_nuevo' %}">+ Nuevo recordatorio</a>
+</div>
 
+{% if pagos %}
 <section class="rejilla">
     {% for pago in pagos %}
     <article class="tarjeta">
         <h2>{{ pago.nombre }}</h2>
-        <p class="cifra">{{ pago.monto }}</p>
-        <p>Vence el {{ pago.fecha }} (faltan {{ pago.faltan }})</p>
+        <p class="cifra">{{ pago.monto|cop }}</p>
+        <p>Vence el {{ pago.fecha|date:"d/m/Y" }} ({{ pago.fecha|faltan }})</p>
+        <p class="acciones-fila">
+            <a href="{% url 'recordatorio_editar' pago.pk %}">Editar</a>
+            <a href="{% url 'recordatorio_eliminar' pago.pk %}">Eliminar</a>
+        </p>
     </article>
     {% endfor %}
 </section>
-
-<h2>Nuevo recordatorio</h2>
-<form class="formulario ancho" action="{% url 'recordatorios' %}" method="get">
-    <div class="fila">
-        <div>
-            <label for="nombre">¿Qué vas a pagar?</label>
-            <input id="nombre" type="text" name="nombre" placeholder="Arriendo" required>
-        </div>
-        <div>
-            <label for="monto">Monto</label>
-            <input id="monto" type="number" name="monto" min="0" step="1000" required>
-        </div>
-        <div>
-            <label for="fecha">Fecha de pago</label>
-            <input id="fecha" type="date" name="fecha" required>
-        </div>
-    </div>
-    <button class="boton" type="submit">Guardar recordatorio</button>
-</form>
+{% else %}
+<div class="tarjeta dorada">
+    <p>Aún no tienes recordatorios. Guarda la fecha de tu próximo pago para no olvidarlo.</p>
+    <a class="boton" href="{% url 'recordatorio_nuevo' %}">Crear un recordatorio</a>
+</div>
+{% endif %}
 {% endblock %}

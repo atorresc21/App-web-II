@@ -1,18 +1,25 @@
+
 """
 Configuración de Django para el proyecto Axon Budget.
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Solo para desarrollo. No subas esta clave a un servidor real.
-SECRET_KEY = 'django-insecure-i7$=q!^g^tbbus#peiv*p_bj-5)3srw=00%d@6gd^(!&-39^2_'
+# Cargar las variables del archivo .env
+load_dotenv(BASE_DIR / ".env")
+
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("No se encontró DJANGO_SECRET_KEY en el archivo .env")
 
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,12 +61,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'axon_budget.wsgi.application'
 
-
-import os
-from dotenv import load_dotenv
-
-load_dotenv(BASE_DIR / ".env")
-
+# Conexión a MySQL mediante variables del archivo .env
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -89,8 +91,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Idioma y hora
 LANGUAGE_CODE = 'es-co'
 
 TIME_ZONE = 'America/Bogota'
@@ -99,8 +99,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Archivos estáticos (CSS, JavaScript, imágenes)
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 

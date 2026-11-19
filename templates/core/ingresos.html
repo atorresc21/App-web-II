@@ -1,48 +1,42 @@
 {% extends "base.html" %}
+{% load formato %}
 {% block titulo %}Ingresos{% endblock %}
 {% block contenido %}
-<h1>Ingresos</h1>
-<p>Anota el dinero que recibes y cada cuánto te llega.</p>
-
-<form class="formulario ancho" action="{% url 'ingresos' %}" method="get">
-    <div class="fila">
-        <div>
-            <label for="descripcion">Descripción</label>
-            <input id="descripcion" type="text" name="descripcion" placeholder="Pago quincenal" required>
-        </div>
-        <div>
-            <label for="monto">Monto</label>
-            <input id="monto" type="number" name="monto" min="0" step="1000" required>
-        </div>
-        <div>
-            <label for="fecha">Fecha</label>
-            <input id="fecha" type="date" name="fecha" required>
-        </div>
-        <div>
-            <label for="periodicidad">Periodicidad</label>
-            <select id="periodicidad" name="periodicidad">
-                <option>Diaria</option>
-                <option>Semanal</option>
-                <option selected>Quincenal</option>
-                <option>Mensual</option>
-                <option>Variable</option>
-            </select>
-        </div>
+<div class="encabezado-pagina">
+    <div>
+        <p class="sobretitulo">El dinero que entra</p>
+        <h1>Ingresos</h1>
+        <p>Anota lo que recibes y cada cuánto te llega.</p>
     </div>
-    <button class="boton" type="submit">Guardar ingreso</button>
-</form>
+    <a class="boton" href="{% url 'ingreso_nuevo' %}">+ Nuevo ingreso</a>
+</div>
 
-<h2>Ingresos registrados</h2>
 <div class="tabla-contenedor">
     <table>
         <thead>
-            <tr><th>Fecha</th><th>Descripción</th><th>Periodicidad</th><th>Monto</th></tr>
+            <tr><th>Fecha</th><th>Descripción</th><th>Periodicidad</th><th>Monto</th><th>Acciones</th></tr>
         </thead>
         <tbody>
             {% for i in ingresos %}
-            <tr><td>{{ i.fecha }}</td><td>{{ i.descripcion }}</td><td>{{ i.periodicidad }}</td><td>{{ i.monto }}</td></tr>
+            <tr>
+                <td>{{ i.fecha|date:"d/m/Y" }}</td>
+                <td>{{ i.descripcion }}</td>
+                <td>{{ i.get_periodicidad_display }}</td>
+                <td class="monto">{{ i.monto|cop }}</td>
+                <td class="acciones-fila">
+                    <a href="{% url 'ingreso_editar' i.pk %}">Editar</a>
+                    <a href="{% url 'ingreso_eliminar' i.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">Aún no has registrado ingresos. Empieza con el primero.</td></tr>
             {% endfor %}
         </tbody>
+        {% if ingresos %}
+        <tfoot>
+            <tr><td colspan="3">Total registrado</td><td class="monto">{{ total|cop }}</td><td></td></tr>
+        </tfoot>
+        {% endif %}
     </table>
 </div>
 {% endblock %}

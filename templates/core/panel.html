@@ -1,42 +1,111 @@
 {% extends "base.html" %}
+{% load formato %}
 {% block titulo %}Panel{% endblock %}
 {% block contenido %}
-<h1>Mi panel</h1>
-<p>Así se ve tu ingreso más reciente repartido entre gastos, ahorro y dinero disponible.</p>
+<p class="sobretitulo">{{ mes_actual }}</p>
+<h1>Hola, {{ user.first_name|default:user.username }}</h1>
+<p>Así se reparte tu dinero este mes.</p>
 
-<section class="rejilla">
-    <article class="tarjeta resumen">
+{% for pago in alertas %}
+<div class="mensaje mensaje-alerta" role="alert">
+    <span class="mensaje-icono" aria-hidden="true">!</span>
+    <p>Pago próximo: <strong>{{ pago.nombre }}</strong> por {{ pago.monto|cop }}, {{ pago.fecha|faltan }}.</p>
+</div>
+{% endfor %}
+
+<section class="rejilla cuatro">
+    <article class="tarjeta">
+        <h2>Ingresos del mes</h2>
+        <p class="cifra">{{ plan.ingresos|cop }}</p>
+    </article>
+    <article class="tarjeta">
         <h2>Para tus gastos</h2>
-        <p class="cifra">{{ para_gastos }}</p>
+        <p class="cifra">{{ plan.gastos|cop }}</p>
     </article>
-    <article class="tarjeta resumen">
+    <article class="tarjeta">
         <h2>Ahorro sugerido</h2>
-        <p class="cifra">{{ ahorro }}</p>
+        <p class="cifra">{{ plan.ahorro|cop }}</p>
     </article>
-    <article class="tarjeta resumen resaltada">
+    <article class="tarjeta resaltada">
         <h2>Dinero disponible</h2>
-        <p class="cifra">{{ disponible }}</p>
+        <p class="cifra">{{ plan.disponible|cop }}</p>
     </article>
+</section>
+
+<section class="tarjeta dorada">
+    <h2>Distribución de tus ingresos</h2>
+    {% if plan.sin_movimientos %}
+        <p>Aún no hay movimientos este mes. Registra tu primer ingreso y te mostraremos cuánto separar para tus gastos y cuánto ahorrar.</p>
+        <a class="boton" href="{% url 'ingreso_nuevo' %}">Registrar mi primer ingreso</a>
+    {% else %}
+        <div class="distribucion" role="img" aria-label="Gastos {{ plan.pct_gastos }} %, ahorro {{ plan.pct_ahorro }} %, disponible {{ plan.pct_disponible }} %">
+            <span class="tramo tramo-gastos" style="width: {{ plan.pct_gastos }}%"></span>
+            <span class="tramo tramo-ahorro" style="width: {{ plan.pct_ahorro }}%"></span>
+            <span class="tramo tramo-disponible" style="width: {{ plan.pct_disponible }}%"></span>
+        </div>
+        <ul class="leyenda">
+            <li><span class="punto punto-gastos"></span> Gastos {{ plan.pct_gastos }} %</li>
+            <li><span class="punto punto-ahorro"></span> Ahorro {{ plan.pct_ahorro }} %</li>
+            <li><span class="punto punto-disponible"></span> Disponible {{ plan.pct_disponible }} %</li>
+        </ul>
+        {% if plan.supera %}
+        <p class="nota">Tus gastos de este mes superan tus ingresos. Revisa tus gastos variables para recuperar el equilibrio.</p>
+        {% endif %}
+        <p class="nota">Regla de planificación: sugerimos ahorrar el 20 % de tus ingresos del mes, siempre que te alcance después de tus gastos.</p>
+    {% endif %}
 </section>
 
 <section class="rejilla dos">
     <article class="tarjeta">
         <h2>Meta principal</h2>
-        <p><strong>{{ meta_principal.nombre }}</strong></p>
-        <div class="barra-progreso" role="progressbar" aria-valuenow="{{ meta_principal.avance }}" aria-valuemin="0" aria-valuemax="100">
-            <span style="width: {{ meta_principal.avance }}%"></span>
-        </div>
-        <p>{{ meta_principal.ahorrado }} de {{ meta_principal.objetivo }} ({{ meta_principal.avance }} %)</p>
-        <a href="{% url 'metas' %}">Ver todas las metas</a>
+        {% if meta_principal %}
+            <p><strong>{{ meta_principal.nombre }}</strong></p>
+            <div class="barra-progreso" role="progressbar" aria-valuenow="{{ meta_principal.avance }}" aria-valuemin="0" aria-valuemax="100">
+                <span style="width: {{ meta_principal.avance }}%"></span>
+            </div>
+            <p>{{ meta_principal.ahorrado|cop }} de {{ meta_principal.objetivo|cop }} ({{ meta_principal.avance }} %)</p>
+            <a href="{% url 'metas' %}">Ver todas las metas</a>
+        {% else %}
+            <p>Aún no tienes metas. Crear la primera es el mejor primer paso.</p>
+            <a class="boton boton-claro" href="{% url 'meta_nueva' %}">Crear mi primera meta</a>
+        {% endif %}
     </article>
     <article class="tarjeta">
         <h2>Próximos pagos</h2>
-        <ul class="lista">
-            {% for pago in pagos %}
-            <li><span>{{ pago.nombre }} · {{ pago.fecha }}</span> <strong>{{ pago.monto }}</strong></li>
-            {% endfor %}
-        </ul>
-        <a href="{% url 'recordatorios' %}">Ver recordatorios</a>
+        {% if proximos %}
+            <ul class="lista">
+                {% for pago in proximos %}
+                <li><span>{{ pago.nombre }} · {{ pago.fecha|date:"d/m/Y" }} ({{ pago.fecha|faltan }})</span> <strong>{{ pago.monto|cop }}</strong></li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'recordatorios' %}">Ver recordatorios</a>
+        {% else %}
+            <p>No tienes pagos próximos registrados.</p>
+            <a class="boton boton-claro" href="{% url 'recordatorio_nuevo' %}">Crear un recordatorio</a>
+        {% endif %}
     </article>
 </section>
+
+<h2>Últimos movimientos</h2>
+{% if recientes %}
+<div class="tabla-contenedor">
+    <table>
+        <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Monto</th></tr>
+        </thead>
+        <tbody>
+            {% for m in recientes %}
+            <tr>
+                <td>{{ m.fecha|date:"d/m/Y" }}</td>
+                <td>{{ m.tipo }}</td>
+                <td>{{ m.descripcion }}</td>
+                <td class="monto">{% if m.tipo == "Gasto" %}-{% else %}+{% endif %}{{ m.monto|cop }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>Cuando registres ingresos y gastos, aquí verás tus últimos movimientos.</p>
+{% endif %}
 {% endblock %}

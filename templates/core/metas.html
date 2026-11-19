@@ -1,9 +1,17 @@
 {% extends "base.html" %}
+{% load formato %}
 {% block titulo %}Metas{% endblock %}
 {% block contenido %}
-<h1>Metas de ahorro</h1>
-<p>Puedes tener varias metas y elegir una como principal.</p>
+<div class="encabezado-pagina">
+    <div>
+        <p class="sobretitulo">Ahorrar con propósito</p>
+        <h1>Metas de ahorro</h1>
+        <p>Puedes tener varias metas y elegir una como principal.</p>
+    </div>
+    <a class="boton" href="{% url 'meta_nueva' %}">+ Nueva meta</a>
+</div>
 
+{% if metas %}
 <section class="rejilla">
     {% for meta in metas %}
     <article class="tarjeta {% if meta.principal %}resaltada{% endif %}">
@@ -12,27 +20,18 @@
         <div class="barra-progreso" role="progressbar" aria-valuenow="{{ meta.avance }}" aria-valuemin="0" aria-valuemax="100">
             <span style="width: {{ meta.avance }}%"></span>
         </div>
-        <p>{{ meta.ahorrado }} de {{ meta.objetivo }} ({{ meta.avance }} %)</p>
+        <p>{{ meta.ahorrado|cop }} de {{ meta.objetivo|cop }} ({{ meta.avance }} %)</p>
+        <p class="acciones-fila">
+            <a href="{% url 'meta_editar' meta.pk %}">Editar</a>
+            <a href="{% url 'meta_eliminar' meta.pk %}">Eliminar</a>
+        </p>
     </article>
     {% endfor %}
 </section>
-
-<h2>Nueva meta</h2>
-<form class="formulario ancho" action="{% url 'metas' %}" method="get">
-    <div class="fila">
-        <div>
-            <label for="nombre">Nombre de la meta</label>
-            <input id="nombre" type="text" name="nombre" required>
-        </div>
-        <div>
-            <label for="objetivo">Monto que quieres lograr</label>
-            <input id="objetivo" type="number" name="objetivo" min="0" step="1000" required>
-        </div>
-    </div>
-    <label class="casilla">
-        <input type="checkbox" name="principal">
-        Marcar como meta principal
-    </label>
-    <button class="boton" type="submit">Guardar meta</button>
-</form>
+{% else %}
+<div class="tarjeta dorada">
+    <p>Aún no tienes metas. Una meta clara es el primer paso para ahorrar con intención.</p>
+    <a class="boton" href="{% url 'meta_nueva' %}">Crear mi primera meta</a>
+</div>
+{% endif %}
 {% endblock %}
